@@ -6,4 +6,4 @@ def fibo(n):
 
     for i in range(n):
         yield a
-        a, b = b, a + b
+        (a, b) = (b, a + b)

@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 
 from .problema_1 import fibo
+from .problema_2 import plataformas
 
 
 app = FastAPI()
@@ -24,3 +25,8 @@ async def fibonacci(n: int):
         )
 
     return list(fibo(n + 1))[-1]
+
+
+@app.get('/veiculos')
+async def show_best_vehicles():
+    return plataformas

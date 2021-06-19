@@ -8,12 +8,41 @@
           width: 80%;
         }
         table, td, th {
-          border: 1px solid black;
           text-align: center;
+        }
+        .highlight td {
+          background-color: #99e699;
+        }
+        #legenda {
+          margin-top: 2rem;
+        }
+        #legenda span {
+          display: block;
+          margin: 1px 3px 0px 0px;
+        }
+        span:before {
+          content: "";
+          display: inline-block;
+          width: 15px;
+          height: 15px;
+          margin-right: 5px;
+        }
+        .square:before {
+          background-color: #99e699;
         }
     </style>
 </head>
 <body>
+
+<h3>Características da sua mercadoria:</h3>
+  <ul>
+    <li>Largura: {{model.largura}}
+    <li>Altura: {{model.altura}}
+    <li>Espessura: {{model.espessura}}
+    <li>Peso: {{model.peso}}
+  </ul>
+
+<h3>Veículos disponíveis</h3>   
 
 <table>
   <!-- header -->
@@ -27,13 +56,25 @@
 
   <!-- rows -->
   {% for dict_item in plataformas %}
-    <tr>
-        {% for value in dict_item.values() %}
-            <td>{{ value }}</td>
-        {% endfor %}
-    </tr>
+    {% if dict_item.possui_requisitos == "Sim" %}
+      <tr class="highlight">
+          {% for value in dict_item.values() %}
+              <td>{{ value }}</td>
+          {% endfor %}
+      </tr>
+    {% else %}
+      <tr>
+          {% for value in dict_item.values() %}
+              <td>{{ value }}</td>
+          {% endfor %}
+      </tr>
+    {% endif %}
   {% endfor %}
 </table>
+
+<div id="legenda">
+  <span class='square'>Suporta a mercadoria</span>
+</div>
 
 </body>
 </html>

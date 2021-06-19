@@ -1,3 +1,8 @@
+from typing import Union, Optional
+
+from pydantic import BaseModel
+
+
 plataformas = [
     {
         'plataforma': 'Lala',
@@ -43,3 +48,14 @@ plataformas = [
 
 for x in plataformas:
     x['volume_max'] = x['largura_max'] * x['altura_max'] * x['espessura_max']
+
+plataformas = sorted(plataformas, key=lambda x: x['volume_max'])
+
+
+class Transporte(BaseModel):
+    plataforma: Optional[str]
+    veiculo: Optional[str]
+    largura: Union[int, float]
+    altura: Union[int, float]
+    espessura: Union[int, float]
+    peso: Union[int, float]

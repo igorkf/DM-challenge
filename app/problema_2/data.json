@@ -1,0 +1,41 @@
+[{
+        "plataforma": "Lala",
+        "veiculo": "Moto",
+        "largura_max": 35,
+        "altura_max": 40,
+        "espessura_max": 30,
+        "peso_max": 20
+    },
+    {
+        "plataforma": "Lala",
+        "veiculo": "Fiorino",
+        "largura_max": 188,
+        "altura_max": 133,
+        "espessura_max": 108,
+        "peso_max": 500
+    },
+    {
+        "plataforma": "Lala",
+        "veiculo": "Carreto",
+        "largura_max": 300,
+        "altura_max": 180,
+        "espessura_max": 200,
+        "peso_max": 1500
+    },
+    {
+        "plataforma": "Ogi",
+        "veiculo": "Moto",
+        "largura_max": 52,
+        "altura_max": 36,
+        "espessura_max": 52,
+        "peso_max": 20
+    },
+    {
+        "plataforma": "Ogi",
+        "veiculo": "SUV",
+        "largura_max": 125,
+        "altura_max": 80,
+        "espessura_max": 60,
+        "peso_max": 200
+    }
+]

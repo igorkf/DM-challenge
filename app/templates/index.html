@@ -3,34 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Veículos para transporte</title>
-    <style>
-        table {
-          width: 80%;
-        }
-        table, td, th {
-          text-align: center;
-        }
-        .highlight td {
-          background-color: #99e699;
-        }
-        #legenda {
-          margin-top: 2rem;
-        }
-        #legenda span {
-          display: block;
-          margin: 1px 3px 0px 0px;
-        }
-        span:before {
-          content: "";
-          display: inline-block;
-          width: 15px;
-          height: 15px;
-          margin-right: 5px;
-        }
-        .square:before {
-          background-color: #99e699;
-        }
-    </style>
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
 </head>
 <body>
 
@@ -42,35 +15,36 @@
     <li>Peso: {{model.peso}}
   </ul>
 
-<h3>Veículos disponíveis</h3>   
+{% for plataforma in plataformas %}
+  <h3>Veículos disponíveis: {{plataforma}}</h3>
 
-<table>
-  <!-- header -->
-  {% if plataformas %}
+  <table>
     <tr>
-        {% for key in plataformas[0] %}
-            <th>{{ key }}</th>
-        {% endfor %}
+      {% for key in data[0] %}
+        <th>{{ key }}</th>
+      {% endfor %}
     </tr>
-  {% endif %}
 
-  <!-- rows -->
-  {% for dict_item in plataformas %}
-    {% if dict_item.possui_requisitos == "Sim" %}
-      <tr class="highlight">
-          {% for value in dict_item.values() %}
-              <td>{{ value }}</td>
-          {% endfor %}
-      </tr>
-    {% else %}
-      <tr>
-          {% for value in dict_item.values() %}
-              <td>{{ value }}</td>
-          {% endfor %}
-      </tr>
-    {% endif %}
-  {% endfor %}
-</table>
+    {% for dict_item in data %}
+      {% if dict_item.plataforma == plataforma %}
+        {% if dict_item.possui_requisitos == "Sim" %}
+          <tr class="highlight">
+              {% for value in dict_item.values() %}
+                  <td>{{ value }}</td>
+              {% endfor %}
+          </tr>
+        {% else %}
+          <tr>
+              {% for value in dict_item.values() %}
+                  <td>{{ '' if value is none else value }}</td>
+              {% endfor %}
+          </tr>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  </table>
+
+{% endfor %}
 
 <div id="legenda">
   <span class='square'>Suporta a mercadoria</span>

@@ -1,6 +1,6 @@
 FROM python:3.9.4-alpine
 
-RUN pip install fastapi uvicorn pytest requests
+RUN pip install fastapi uvicorn jinja2 aiofiles
 
 EXPOSE 8000
 

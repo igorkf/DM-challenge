@@ -1,6 +1,6 @@
 plataformas = [
     {
-        'fabricante': 'Lala',
+        'plataforma': 'Lala',
         'veiculo': 'Moto',
         'largura_max': 35,
         'altura_max': 40,
@@ -8,7 +8,7 @@ plataformas = [
         'peso_max': 20
     },
     {
-        'fabricante': 'Lala',
+        'plataforma': 'Lala',
         'veiculo': 'Fiorino',
         'largura_max': 188,
         'altura_max': 133,
@@ -16,7 +16,7 @@ plataformas = [
         'peso_max': 500
     },
     {
-        'fabricante': 'Lala',
+        'plataforma': 'Lala',
         'veiculo': 'Carreto',
         'largura_max': 300,
         'altura_max': 180,
@@ -24,7 +24,7 @@ plataformas = [
         'peso_max': 1500
     },
     {
-        'fabricante': 'Ogi',
+        'plataforma': 'Ogi',
         'veiculo': 'Moto',
         'largura_max': 52,
         'altura_max': 36,
@@ -32,7 +32,7 @@ plataformas = [
         'peso_max': 20
     },
     {
-        'fabricante': 'Ogi',
+        'plataforma': 'Ogi',
         'veiculo': 'SUV',
         'largura_max': 125,
         'altura_max': 80,

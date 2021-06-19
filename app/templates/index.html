@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Veículos para transporte</title>
+    <style>
+        table {
+          width: 80%;
+        }
+        table, td, th {
+          border: 1px solid black;
+          text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<table>
+  <!-- header -->
+  {% if plataformas %}
+    <tr>
+        {% for key in plataformas[0] %}
+            <th>{{ key }}</th>
+        {% endfor %}
+    </tr>
+  {% endif %}
+
+  <!-- rows -->
+  {% for dict_item in plataformas %}
+    <tr>
+        {% for value in dict_item.values() %}
+            <td>{{ value }}</td>
+        {% endfor %}
+    </tr>
+  {% endfor %}
+</table>
+
+</body>
+</html>

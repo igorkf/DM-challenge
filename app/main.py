@@ -1,10 +1,13 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 from .problema_1 import fibo
 from .problema_2 import plataformas
 
 
 app = FastAPI()
+templates = Jinja2Templates(directory='app/templates')
 
 
 @app.get('/fibonacci/{n}')
@@ -27,6 +30,10 @@ async def fibonacci(n: int):
     return list(fibo(n + 1))[-1]
 
 
-@app.get('/veiculos')
-async def show_best_vehicles():
-    return plataformas
+@app.get('/transporte', response_class=HTMLResponse)
+async def show_vehicle_options(request: Request):
+    context = {
+        'request': request,
+        'plataformas': plataformas
+    }
+    return templates.TemplateResponse('index.html', context=context)

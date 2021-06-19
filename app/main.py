@@ -38,7 +38,7 @@ async def fibonacci(n: int):
             detail='Opa...vai com calma.'
         )
 
-    return list(fibo(n + 1))[-1]
+    return list(fibo(n))[-1]
 
 
 @app.get('/transporte', response_class=HTMLResponse)

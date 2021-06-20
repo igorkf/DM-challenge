@@ -1,24 +1,11 @@
-from pathlib import Path
-import json
+from typing import List
 
-from fastapi import FastAPI, Request, HTTPException, Depends
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI, HTTPException, Query, Depends
 
 from .problema_1 import fibo
-from .problema_2 import Transporte
-
-
-BASE_DIR = Path(__file__).parent.parent.absolute()
+from .problema_2 import data, plataformas
 
 app = FastAPI()
-app.mount(
-    '/static',
-    StaticFiles(directory=BASE_DIR / 'app/static'),
-    name='static'
-)
-templates = Jinja2Templates(directory='app/templates')
 
 
 @app.get('/fibonacci/{n}')
@@ -27,6 +14,7 @@ async def fibonacci(n: int):
     Escolhe o n-ésimo elemento (considerando 0 como primeiro elemento) da sequência
     de Fibonacci, dado um número maior ou igual a 0.
     '''
+
     if n < 0:
         raise HTTPException(
             status_code=422,
@@ -41,39 +29,46 @@ async def fibonacci(n: int):
     return list(fibo(n))[-1]
 
 
-@app.get('/transporte', response_class=HTMLResponse)
-async def transporte(request: Request, model: Transporte = Depends()):
+@app.get('/transporte')
+async def transporte(
+    largura: List[float] = Query(...),
+    altura: List[float] = Query(...),
+    espessura: List[float] = Query(...),
+    peso: List[float] = Query(...)
+):
     '''
-    Calcula quais opções de transporte suportam uma mercadoria de acordo
-    com as características da mercadoria, além de mostrar o custo benefício.   
+    Encontra melhor veículo para transportar uma lista de itens, agrupado por plataforma.
     '''
 
-    with open('app/problema_2/data.json', 'r') as f:
-        data = json.loads(f.read())
+    if any(len(lst) != largura for lst in [altura, espessura, peso]):
+        raise HTTPException(
+            status_code=422,
+            detail='Algum dos itens possui quantidade diferente de características.'
+        )
 
-    for x in data:
-        x['volume_max'] = x['largura_max'] * \
-            x['altura_max'] * x['espessura_max']
-        x['possui_requisitos'] = 'Não'
-        x['nivel_de_custo'] = None
-
-    sorted_data = sorted(data, key=lambda k: (
-        k['plataforma'], k['volume_max']))
-    plataformas = sorted({x['plataforma'] for x in sorted_data})
-
+    result = []
     for plataforma in plataformas:
-        i = 0
-        for x in sorted_data:
-            if x['plataforma'] == plataforma and model.largura <= x['largura_max'] and model.altura <= x['altura_max'] and model.espessura <= x['espessura_max'] and model.peso <= x['peso_max']:
-                x['possui_requisitos'] = 'Sim'
-                i += 1
-                x['nivel_de_custo'] = i
+        obj = {}
+        obj['plataforma'] = plataforma
 
-    context = {
-        'request': request,
-        'plataformas': plataformas,
-        'data': sorted_data,
-        'model': model
-    }
+        itens = []
+        for i, (lar, alt, esp, pes) in enumerate(zip(largura, altura, espessura, peso), start=1):
+            try:
+                veiculo_ideal = list(filter(lambda x: lar <= x['largura_max'] and alt <= x['altura_max'] and esp <= x['espessura_max'] and pes <= x['peso_max'] and x['plataforma'] == plataforma, data))[0]
+                print(veiculo_ideal)
+            except IndexError:
+                veiculo_ideal = {}
+            item = {
+                'id': i,
+                'largura': lar,
+                'altura': alt,
+                'espessura': esp,
+                'peso': pes,
+                'veiculo_ideal': veiculo_ideal
+            }
+            itens.append(item)
+            obj['itens'] = itens
 
-    return templates.TemplateResponse('index.html', context=context)
+        result.append(obj)
+
+    return result

@@ -11,7 +11,7 @@ app = FastAPI()
 @app.get('/fibonacci/{n}')
 async def fibonacci(n: int):
     '''
-    Escolhe o n-ésimo elemento (considerando 0 como primeiro elemento) da sequência
+    Encontra o n-ésimo elemento (considerando 0 como primeiro elemento) da sequência
     de Fibonacci, dado um número maior ou igual a 0.
     '''
 
@@ -40,35 +40,37 @@ async def transporte(
     Encontra melhor veículo para transportar uma lista de itens, agrupado por plataforma.
     '''
 
-    if any(len(lst) != largura for lst in [altura, espessura, peso]):
+    if not len(set(len(x) for x in [largura, altura, espessura, peso])) == 1:
         raise HTTPException(
             status_code=422,
-            detail='Algum dos itens possui quantidade diferente de características.'
+            detail='Um ou mais itens possuem quantidade diferente de características.'
         )
+
+    # TODO: usar volume em vez de medidas totais
+
+    larg_total = sum(largura)
+    alt_total = sum(altura)
+    esp_total = sum(espessura)
+    peso_total = sum(peso)
 
     result = []
     for plataforma in plataformas:
         obj = {}
+
+        try:
+            veiculo_ideal = list(filter(lambda x: larg_total <= x['largura_max'] and alt_total <= x['altura_max'] and esp_total <= x['espessura_max'] and peso_total <= x['peso_max'] and x['plataforma'] == plataforma, data))[0]
+            print(veiculo_ideal)
+        except IndexError:
+            veiculo_ideal = {}
+
+        veiculo_ideal = {x[0]: x[1] for x in veiculo_ideal.items() if x[0] != 'plataforma'}
+
         obj['plataforma'] = plataforma
-
-        itens = []
-        for i, (lar, alt, esp, pes) in enumerate(zip(largura, altura, espessura, peso), start=1):
-            try:
-                veiculo_ideal = list(filter(lambda x: lar <= x['largura_max'] and alt <= x['altura_max'] and esp <= x['espessura_max'] and pes <= x['peso_max'] and x['plataforma'] == plataforma, data))[0]
-                print(veiculo_ideal)
-            except IndexError:
-                veiculo_ideal = {}
-            item = {
-                'id': i,
-                'largura': lar,
-                'altura': alt,
-                'espessura': esp,
-                'peso': pes,
-                'veiculo_ideal': veiculo_ideal
-            }
-            itens.append(item)
-            obj['itens'] = itens
-
+        obj['largura_total'] = larg_total
+        obj['altura_total'] =  alt_total
+        obj['espessura_total'] = esp_total
+        obj['peso_total'] = peso_total
+        obj['veiculo_ideal'] = veiculo_ideal
         result.append(obj)
 
     return result

@@ -9,14 +9,22 @@ Clone o repositório:
 git clone https://github.com/igorkf/DM-challenge.git
 ```
 
-Dentro do repositório, construa a imagem do Docker:
+Dentro da pasta do repositório, crie um arquivo chamado `.env`:
+```
+SECRET=...
+ALGORITHM=...
+USER_EMAIL=...
+USER_PASS=...
+```
+
+Construa a imagem do Docker:
 ```
 docker build -t my_api .
 ```
 
 Defina o container:
 ```
-docker run --name my_container -p 8000:8000 my_api
+docker run --env-file=.env --name my_container -p 8000:8000 my_api
 ```
 
 ### Autenticação

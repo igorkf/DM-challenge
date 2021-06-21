@@ -10,7 +10,11 @@ from .auth.auth_handler import signJWT, USER
 from .auth.auth_bearer import JWTBearer
 
 
-app = FastAPI(redoc_url=None)
+app = FastAPI(
+    title='DM-challenge',
+    description='Uma API implementada com FastAPI, que possui autenticação JWT, para resolver dois problemas interessantes.',
+    redoc_url=None
+)
 
 
 users = [USER]

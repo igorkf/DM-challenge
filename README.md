@@ -18,27 +18,22 @@ Defina o container:
 docker run --name my_container -p 8000:8000 my_api
 ```
 
-Acesse http://localhost:8000/ para testar as rotas.   
+### Documentação   
+Acesse http://localhost:8000/docs    
+Teste as rotas pela própria documentação.   
 
 ## Problemas
 
 ### Problema 1
-Encontre o n-ésimo elemento (considerando 0 como primeiro elemento) da sequência de Fibonacci, dado um número maior ou igual a 0.
-
-Exemplo de uso:   
-- /fibonacci/10 
+Encontre o n-ésimo elemento (considerando 0 como primeiro elemento) da sequência de Fibonacci, dado um número maior ou igual a 0.   
+- /fibonacci/{n} 
 
 ### Problema 2
-Encontre o melhor veículo para transportar uma lista de itens, agrupado por plataforma.
+Encontre o melhor veículo para transportar uma lista de itens, agrupado por plataforma.   
+- /transporte
 
-Exemplo de uso (passando 2 itens):
-- /transporte?largura=200&largura=5&altura=12&altura=0.3&espessura=6.6&espessura=10.3&peso=1.612&peso=22.33
+OBS.: cada parâmetro pode receber uma lista de valores. Teste na documentação e veja como a API monta a *query string*.     
+
 
 ## Extra
 
-...
-
-
-## Documentação da API  
-
-http://localhost:8000/redoc

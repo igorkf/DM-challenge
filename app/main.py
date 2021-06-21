@@ -2,11 +2,24 @@ from typing import List
 from decimal import Decimal
 
 from fastapi import FastAPI, HTTPException, Query, Depends
+from fastapi.security import OAuth2PasswordBearer
 
 from .problema_1 import fibo
 from .problema_2 import data, plataformas
+from .extra import User, fake_decode_token
 
-app = FastAPI(docs_url=None)
+app = FastAPI(redoc_url=None)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
+
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    user = fake_decode_token(token)
+    return user
+
+
+@app.get('/users/me')
+async def read_users_me(current_user: User = Depends(get_current_user)):
+    return current_user
 
 
 @app.get('/fibonacci/{n}')
@@ -44,7 +57,7 @@ async def transporte(
     if not len(set(len(x) for x in [largura, altura, espessura, peso])) == 1:
         raise HTTPException(
             status_code=422,
-            detail='Um ou mais itens possuem quantidade diferente de características.'
+            detail='Um ou mais itens possuem quantidades diferentes de características.'
         )
 
     volume_total = sum(

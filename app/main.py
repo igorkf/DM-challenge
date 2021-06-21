@@ -1,44 +1,39 @@
 from typing import List
 from decimal import Decimal
 
-from fastapi import FastAPI, HTTPException, Query, Body
+from fastapi import FastAPI, HTTPException, Query, Body, Depends
 
 from .problema_1 import fibo
 from .problema_2 import data, plataformas
-from .auth.model import UserSchema, UserLoginSchema
-from .auth.auth_handler import signJWT
+from .auth.model import UserLoginSchema
+from .auth.auth_handler import signJWT, USER
+from .auth.auth_bearer import JWTBearer
 
 
 app = FastAPI(redoc_url=None)
 
 
-users = []
+users = [USER]
 
 
 def check_user(data: UserLoginSchema):
     for user in users:
-        if user.email == data.email and user.password == data.password:
+        if user['email'] == data.email and user['password'] == data.password:
             return True
     return False
-
-
-@app.post('/user/signup', tags=['user'])
-async def create_user(user: UserSchema = Body(...)):
-    # replace with db call, making sure to hash the password first
-    users.append(user)
-    return signJWT(user.email)
 
 
 @app.post('/user/login', tags=['user'])
 async def user_login(user: UserLoginSchema = Body(...)):
     if check_user(user):
         return signJWT(user.email)
-    return {
-        'error': 'Username ou password incorretos.'
-    }
+    raise HTTPException(
+        status_code=403,
+        detail='Email ou senha incorretos.'
+    )
 
 
-@app.get('/fibonacci/{n}', tags=['problema 1'])
+@app.get('/fibonacci/{n}', tags=['problema 1'], dependencies=[Depends(JWTBearer())])
 async def fibonacci(n: int):
     '''
     Encontra o n-ésimo elemento (considerando 0 como primeiro elemento) da sequência
@@ -59,7 +54,7 @@ async def fibonacci(n: int):
     return list(fibo(n))[-1]
 
 
-@app.get('/transporte', tags=['problema 2'])
+@app.get('/transporte', tags=['problema 2'], dependencies=[Depends(JWTBearer())])
 async def transporte(
     largura: List[Decimal] = Query(...),
     altura: List[Decimal] = Query(...),

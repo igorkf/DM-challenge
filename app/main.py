@@ -25,6 +25,10 @@ def check_user(data: UserLoginSchema):
 
 @app.post('/user/login', tags=['user'])
 async def user_login(user: UserLoginSchema = Body(...)):
+    '''
+    Verifica credenciais do usuário e retorna um token JWT para autorizar rotas protegidas caso
+    o usuário esteja autorizado a usar a API.
+    '''
     if check_user(user):
         return signJWT(user.email)
     raise HTTPException(

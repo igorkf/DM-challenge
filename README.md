@@ -98,4 +98,7 @@ Resultado:
 ]
 ```
 
+## Referências:
+- [FastAPI](https://fastapi.tiangolo.com/)
+- [JWT auth](https://testdriven.io/blog/fastapi-jwt-auth/)
 

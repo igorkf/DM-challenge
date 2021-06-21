@@ -1,7 +1,6 @@
 # DM-challenge
 
-Foi implementada uma API para resolver 2 problemas independentes.   
-As rotas usam autenticação JWT.      
+![](docs.png)
 
 ## Como utilizar a API
 Clone o repositório:   

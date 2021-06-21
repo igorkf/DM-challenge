@@ -1,11 +1,12 @@
 from typing import List
+from decimal import Decimal
 
 from fastapi import FastAPI, HTTPException, Query, Depends
 
 from .problema_1 import fibo
 from .problema_2 import data, plataformas
 
-app = FastAPI()
+app = FastAPI(docs_url=None)
 
 
 @app.get('/fibonacci/{n}')
@@ -31,10 +32,10 @@ async def fibonacci(n: int):
 
 @app.get('/transporte')
 async def transporte(
-    largura: List[float] = Query(...),
-    altura: List[float] = Query(...),
-    espessura: List[float] = Query(...),
-    peso: List[float] = Query(...)
+    largura: List[Decimal] = Query(...),
+    altura: List[Decimal] = Query(...),
+    espessura: List[Decimal] = Query(...),
+    peso: List[Decimal] = Query(...)
 ):
     '''
     Encontra melhor veículo para transportar uma lista de itens, agrupado por plataforma.
@@ -46,31 +47,27 @@ async def transporte(
             detail='Um ou mais itens possuem quantidade diferente de características.'
         )
 
-    # TODO: usar volume em vez de medidas totais
-
-    larg_total = sum(largura)
-    alt_total = sum(altura)
-    esp_total = sum(espessura)
+    volume_total = sum(
+        [x * y * z for x, y, z in zip(largura, altura, espessura)])
     peso_total = sum(peso)
 
     result = []
     for plataforma in plataformas:
-        obj = {}
-
         try:
-            veiculo_ideal = list(filter(lambda x: larg_total <= x['largura_max'] and alt_total <= x['altura_max'] and esp_total <= x['espessura_max'] and peso_total <= x['peso_max'] and x['plataforma'] == plataforma, data))[0]
-            print(veiculo_ideal)
+            veiculo_ideal = list(filter(
+                lambda x: volume_total <= x['volume_max'] and peso_total <= x['peso_max'] and x['plataforma'] == plataforma, data))[0]
         except IndexError:
-            veiculo_ideal = {}
+            veiculo_ideal = None
 
-        veiculo_ideal = {x[0]: x[1] for x in veiculo_ideal.items() if x[0] != 'plataforma'}
+        veiculo_ideal = {x[0]: x[1]
+                         for x in veiculo_ideal.items() if x[0] != 'plataforma'}
 
-        obj['plataforma'] = plataforma
-        obj['largura_total'] = larg_total
-        obj['altura_total'] =  alt_total
-        obj['espessura_total'] = esp_total
-        obj['peso_total'] = peso_total
-        obj['veiculo_ideal'] = veiculo_ideal
+        obj = {
+            'plataforma': plataforma,
+            'volume_total': volume_total,
+            'peso_total': peso_total,
+            'veiculo_ideal': veiculo_ideal,
+        }
         result.append(obj)
 
     return result

@@ -1,6 +1,7 @@
 FROM python:3.9.4-alpine
 
-RUN pip install fastapi uvicorn
+RUN pip install pip --upgrade
+RUN pip install fastapi uvicorn PyJWT python-decouple pydantic[email]
 
 EXPOSE 8000
 

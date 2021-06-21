@@ -1,15 +1,47 @@
 from typing import List
 from decimal import Decimal
 
-from fastapi import FastAPI, HTTPException, Query, Depends
+from fastapi import FastAPI, HTTPException, Query, Body, Depends
 
 from .problema_1 import fibo
 from .problema_2 import data, plataformas
+from .auth.model import UserLoginSchema
+from .auth.auth_handler import signJWT, USER
+from .auth.auth_bearer import JWTBearer
 
-app = FastAPI(docs_url=None)
+
+app = FastAPI(
+    title='DM-challenge',
+    description='Uma API implementada com FastAPI, que possui autenticação JWT, para resolver dois problemas interessantes.',
+    redoc_url=None
+)
 
 
-@app.get('/fibonacci/{n}')
+users = [USER]
+
+
+def check_user(data: UserLoginSchema):
+    for user in users:
+        if user['email'] == data.email and user['password'] == data.password:
+            return True
+    return False
+
+
+@app.post('/user/login', tags=['user'])
+async def user_login(user: UserLoginSchema = Body(...)):
+    '''
+    Verifica credenciais do usuário e retorna um token JWT para autorizar rotas protegidas caso
+    o usuário esteja autorizado a usar a API.
+    '''
+    if check_user(user):
+        return signJWT(user.email)
+    raise HTTPException(
+        status_code=403,
+        detail='Email ou senha incorretos.'
+    )
+
+
+@app.get('/fibonacci/{n}', tags=['problema 1'], dependencies=[Depends(JWTBearer())])
 async def fibonacci(n: int):
     '''
     Encontra o n-ésimo elemento (considerando 0 como primeiro elemento) da sequência
@@ -30,7 +62,7 @@ async def fibonacci(n: int):
     return list(fibo(n))[-1]
 
 
-@app.get('/transporte')
+@app.get('/transporte', tags=['problema 2'], dependencies=[Depends(JWTBearer())])
 async def transporte(
     largura: List[Decimal] = Query(...),
     altura: List[Decimal] = Query(...),
@@ -44,7 +76,7 @@ async def transporte(
     if not len(set(len(x) for x in [largura, altura, espessura, peso])) == 1:
         raise HTTPException(
             status_code=422,
-            detail='Um ou mais itens possuem quantidade diferente de características.'
+            detail='Um ou mais itens possuem quantidades diferentes de características.'
         )
 
     volume_total = sum(
